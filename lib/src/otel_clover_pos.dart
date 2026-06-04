@@ -2,7 +2,6 @@
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
 import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
-import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_clover_pos_suppression.dart';
 
@@ -52,48 +51,60 @@ Future<T> tracedCloverPOS<T>({
   final t = tracer ?? OTel.tracerProvider().getTracer('otel_clover_pos');
   final span = t.startSpan('clover $operation', kind: SpanKind.client);
   try {
-    span.setStringAttribute('rpc.system', 'clover');
+    span.addAttributes(
+        OTel.attributes([OTel.attributeString('rpc.system', 'clover')]));
     final r = await invoke();
     final res = r.result;
     if (res != null) {
       if (res.merchantId != null) {
-        span.setStringAttribute('clover.merchant.id', res.merchantId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.merchant.id', res.merchantId!)]));
       }
       if (res.employeeId != null) {
-        span.setStringAttribute('clover.employee.id', res.employeeId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.employee.id', res.employeeId!)]));
       }
       if (res.orderId != null) {
-        span.setStringAttribute('clover.order.id', res.orderId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.order.id', res.orderId!)]));
       }
       if (res.paymentId != null) {
-        span.setStringAttribute('clover.payment.id', res.paymentId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.payment.id', res.paymentId!)]));
       }
       if (res.deviceId != null) {
-        span.setStringAttribute('clover.device.id', res.deviceId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.device.id', res.deviceId!)]));
       }
       if (res.itemId != null) {
-        span.setStringAttribute('clover.item.id', res.itemId!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.item.id', res.itemId!)]));
       }
       if (res.amount != null) {
-        span.setDoubleAttribute('clover.amount', res.amount!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeDouble('clover.amount', res.amount!)]));
       }
       if (res.currency != null) {
-        span.setStringAttribute('clover.currency', res.currency!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.currency', res.currency!)]));
       }
       if (res.statusCode != null) {
-        span.setIntAttribute('http.response.status_code', res.statusCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeInt('http.response.status_code', res.statusCode!)]));
       }
       if (res.errorCode != null) {
-        span.setStringAttribute('clover.error.code', res.errorCode!);
+        span.addAttributes(OTel.attributes(
+            [OTel.attributeString('clover.error.code', res.errorCode!)]));
       }
-      final fail =
-          res.errorCode != null ||
+      final fail = res.errorCode != null ||
           (res.statusCode != null && res.statusCode! >= 400);
       if (fail) {
-        span.setStringAttribute(
-          ErrorResource.errorType.key,
-          res.errorCode ?? 'clover.error',
-        );
+        span.addAttributes(OTel.attributes([
+          OTel.attributeString(
+            ErrorResource.errorType.key,
+            res.errorCode ?? 'clover.error',
+          )
+        ]));
         span.setStatus(SpanStatusCode.Error, res.errorMessage);
       }
     }
