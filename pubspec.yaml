@@ -2,7 +2,7 @@ name: otel_clover_pos
 description: >-
   OpenTelemetry instrumentation for clover_pos by Dartastic.io. Adds standard
   OpenTelemetry observability to applications that use clover_pos.
-version: 0.1.0
+version: 0.1.1-wip
 repository: https://github.com/dartastic/otel_clover_pos
 homepage: https://dartastic.io
 
